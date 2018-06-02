@@ -7,7 +7,15 @@ describe('SymphonyTransport Smoke Tests', async () => {
     let sessionToken = null;
     let kmToken = null;
 
-    it('should be able to create a room', async function () {
+    it('should be able to find Angus, Eric, and Naeem', async function() {
+        await authenticate();
+
+        const emails = ['commandercheng@gmail.com', 'eric.vergnaud@credit-suisse.com', 'naeem.ahmed@gmail.com' ];
+        const users = await SymphonyTransport.findUser(emails, sessionToken);
+        expect(users.map(it => it.displayName)).to.deep.equal(['Naeem Ahmed', 'Eric Vergnaud', 'Angus Cheng']);
+    }).timeout(10000);
+
+    it('should be able to create a room and add Angus into it', async function () {
         await authenticate();
 
         const name = 'The Bestest Room ' + generateRandomString();
@@ -18,12 +26,20 @@ describe('SymphonyTransport Smoke Tests', async () => {
         const readOnly = false;
         const copyProtected = false;
         const crossPod = false;
-        const viewHistory = false;
+        const viewHistory = true;
 
-        const response = await SymphonyTransport.createRoom(sessionToken, name, description, membersCanInvite,
+        const createRoomResponse = await SymphonyTransport.createRoom(sessionToken, name, description, membersCanInvite,
             discoverable, isPublic, readOnly, copyProtected, crossPod, viewHistory);
 
-        expect(response).to.exist;
+        expect(createRoomResponse).to.exist;
+
+        const users = await SymphonyTransport.findUser(['commandercheng@gmail.com'], sessionToken);
+        const streamId = createRoomResponse.roomSystemInfo.id;
+
+        const addUserPromises = users.map(user => SymphonyTransport.addUser(sessionToken, streamId, user.id));
+        const addUserResponses = await Promise.all(addUserPromises);
+
+        expect(addUserResponses).to.deep.equal([{format: 'TEXT', message: 'Member added'}])
     }).timeout(10000);
 
     it('should be able to authenticate', async function() {
@@ -32,11 +48,7 @@ describe('SymphonyTransport Smoke Tests', async () => {
         expect(response.kmToken).to.exist;
     }).timeout(10000);
 
-    it('should be able to find Angus', async function() {
-        await authenticate();
-        const users = await SymphonyTransport.findUser('commandercheng@gmail.com', sessionToken);
-        expect(users.map(it => it.displayName)).to.deep.equal(['Angus Cheng']);
-    }).timeout(10000);
+
 
     it('should be able to send a message to a stream', async function() {
         await authenticate();

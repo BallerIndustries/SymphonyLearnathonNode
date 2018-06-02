@@ -7,7 +7,7 @@ async function authenticate(configPath) {
     const config = require(configPath);
     const sessionToken = await sessionAuthenticate(config);
     const kmToken = await kmAuthenticate(config);
-    return { sessionToken, kmToken };
+    return {sessionToken, kmToken};
 }
 
 module.exports.getSessionInfo = async function getSessionInfo(sessionToken) {
@@ -28,23 +28,43 @@ module.exports.getSessionInfo = async function getSessionInfo(sessionToken) {
 module.exports.createRoom =
     async function getSessionInfo(sessionToken, name, description, membersCanInvite, discoverable, isPublic, readOnly,
                                   copyProtected, crossPod, viewHistory) {
-    const url = `https://develop2.symphony.com/pod/v3/room/create`;
+        const url = `https://develop2.symphony.com/pod/v3/room/create`;
+        const headers = {
+            'sessionToken': sessionToken,
+            'Content-Type': 'application/json',
+        };
+
+        const body = {
+            'name': name,
+            'description': description,
+            'membersCanInvite': membersCanInvite,
+            'discoverable': discoverable,
+            'public': isPublic,
+            'readOnly': readOnly,
+            'copyProtected': copyProtected,
+            'crossPod': crossPod,
+            'viewHistory': viewHistory
+        };
+
+        const options = {
+            url: url,
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify(body)
+        };
+
+        const responseJson = await rp(options);
+        return JSON.parse(responseJson);
+    };
+
+module.exports.addUser = async function addUser(sessionToken, streamId, userId) {
+    const url = `https://develop2.symphony.com/pod/v1/room/${streamId}/membership/add`;
     const headers = {
         'sessionToken': sessionToken,
         'Content-Type': 'application/json',
     };
 
-    const body = {
-        'name': name,
-        'description': description,
-        'membersCanInvite': membersCanInvite,
-        'discoverable': discoverable,
-        'public': isPublic,
-        'readOnly': readOnly,
-        'copyProtected': copyProtected,
-        'crossPod': crossPod,
-        'viewHistory': viewHistory
-    };
+    const body = {id: userId};
 
     const options = {
         url: url,
@@ -57,8 +77,8 @@ module.exports.createRoom =
     return JSON.parse(responseJson);
 };
 
-async function findUser(email, sessionToken) {
-    const url = `https://develop2.symphony.com/pod/v3/users?email=${email}&local=false`;
+async function findUsers(emails, sessionToken) {
+    const url = `https://develop2.symphony.com/pod/v3/users?email=${emails.join(',')}&local=false`;
     const headers = {
         sessionToken: sessionToken
     };
@@ -109,12 +129,12 @@ function sessionAuthenticate(symConfig) {
         rejectUnauthorized: false
     };
 
-    const req = https.request(options, function(res) {
+    const req = https.request(options, function (res) {
         let str = '';
-        res.on('data', function(chunk) {
+        res.on('data', function (chunk) {
             str += chunk;
         });
-        res.on('end', function() {
+        res.on('end', function () {
             const SymSessionToken = JSON.parse(str);
             defer.resolve(SymSessionToken.token);
         });
@@ -139,12 +159,12 @@ function kmAuthenticate(symConfig) {
         rejectUnauthorized: false
     };
 
-    const req = https.request(options, function(res) {
+    const req = https.request(options, function (res) {
         let str = '';
-        res.on('data', function(chunk) {
+        res.on('data', function (chunk) {
             str += chunk;
         });
-        res.on('end', function() {
+        res.on('end', function () {
             const SymKmToken = JSON.parse(str);
             defer.resolve(SymKmToken.token);
         });
@@ -155,6 +175,6 @@ function kmAuthenticate(symConfig) {
     return defer.promise;
 }
 
-module.exports.findUser = findUser;
+module.exports.findUser = findUsers;
 module.exports.authenticate = authenticate;
 module.exports.sendMessage = sendMessage;
