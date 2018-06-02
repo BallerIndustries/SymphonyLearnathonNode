@@ -1,0 +1,17 @@
+{
+  "name": "node-symphony",
+  "version": "1.0.0",
+  "description": "Sample Symphony Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.3",
+    "request": "^2.87.0",
+    "symphony-api-client-node": "^0.1.0"
+  }
+}

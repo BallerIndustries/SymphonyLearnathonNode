@@ -1,0 +1,21 @@
+{
+    "sessionAuthHost": "develop2-api.symphony.com",
+    "sessionAuthPort": 8444,
+    "keyAuthHost": "develop2-api.symphony.com",
+    "keyAuthPort": 8444,
+    "podHost": "develop2.symphony.com",
+    "podPort": 443,
+    "agentHost": "develop2.symphony.com",
+    "agentPort": 443,
+    "botCertPath": "/Users/anguruso/Desktop/node-symphony/certificates/",
+    "botCertName": "bot.user81-combined.pem",
+    "botCertPassword": "changeit",
+    "botEmailAddress": "commandercheng@gmail.com",
+    "appCertPath": "",
+    "appCertName": "",
+    "appCertPassword": "",
+    "proxyURL": "",
+    "proxyUsername": "",
+    "proxyPassword": "",
+    "authTokenRefreshPeriod": "30"
+}
