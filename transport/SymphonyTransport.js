@@ -10,6 +10,53 @@ async function authenticate(configPath) {
     return { sessionToken, kmToken };
 }
 
+module.exports.getSessionInfo = async function getSessionInfo(sessionToken) {
+    const url = `https://develop2.symphony.com/pod/v2/sessioninfo`;
+    const headers = {
+        sessionToken: sessionToken
+    };
+
+    const options = {
+        url: url,
+        headers: headers,
+    };
+
+    const responseJson = await rp(options);
+    return JSON.parse(responseJson);
+};
+
+module.exports.createRoom =
+    async function getSessionInfo(sessionToken, name, description, membersCanInvite, discoverable, isPublic, readOnly,
+                                  copyProtected, crossPod, viewHistory) {
+    const url = `https://develop2.symphony.com/pod/v3/room/create`;
+    const headers = {
+        'sessionToken': sessionToken,
+        'Content-Type': 'application/json',
+    };
+
+    const body = {
+        'name': name,
+        'description': description,
+        'membersCanInvite': membersCanInvite,
+        'discoverable': discoverable,
+        'public': isPublic,
+        'readOnly': readOnly,
+        'copyProtected': copyProtected,
+        'crossPod': crossPod,
+        'viewHistory': viewHistory
+    };
+
+    const options = {
+        url: url,
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify(body)
+    };
+
+    const responseJson = await rp(options);
+    return JSON.parse(responseJson);
+};
+
 async function findUser(email, sessionToken) {
     const url = `https://develop2.symphony.com/pod/v3/users?email=${email}&local=false`;
     const headers = {
@@ -23,6 +70,29 @@ async function findUser(email, sessionToken) {
 
     const responseJson = await rp(options);
     return JSON.parse(responseJson).users;
+}
+
+async function sendMessage(sessionToken, keyManagerToken, streamId, message) {
+    const url = `https://develop2.symphony.com/agent/v4/stream/${streamId}/message/create`;
+    const headers = {
+        sessionToken: sessionToken,
+        keyManagerToken: keyManagerToken,
+        contentType: 'multipart/form-data'
+    };
+
+    const body = {
+        message: message
+    };
+
+    const options = {
+        url: url,
+        headers: headers,
+        body: JSON.stringify(body),
+        method: 'POST'
+    };
+
+    const responseJson = await rp(options);
+    return JSON.parse(responseJson);
 }
 
 function sessionAuthenticate(symConfig) {
@@ -87,3 +157,4 @@ function kmAuthenticate(symConfig) {
 
 module.exports.findUser = findUser;
 module.exports.authenticate = authenticate;
+module.exports.sendMessage = sendMessage;

@@ -10,7 +10,7 @@
     "botCertPath": "./certificates/",
     "botCertName": "bot.user81-combined.pem",
     "botCertPassword": "changeit",
-    "botEmailAddress": "commandercheng@gmail.com",
+    "botEmailAddress": "bot.user81@example.com",
     "appCertPath": "",
     "appCertName": "",
     "appCertPassword": "",
