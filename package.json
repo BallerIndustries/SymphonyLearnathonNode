@@ -10,8 +10,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "chai": "^4.1.2",
     "express": "^4.16.3",
+    "kew": "^0.7.0",
+    "mocha": "^5.2.0",
     "request": "^2.87.0",
+    "request-promise": "^4.2.2",
     "symphony-api-client-node": "^0.1.0"
   }
 }

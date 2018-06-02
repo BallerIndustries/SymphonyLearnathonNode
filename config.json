@@ -7,7 +7,7 @@
     "podPort": 443,
     "agentHost": "develop2.symphony.com",
     "agentPort": 443,
-    "botCertPath": "/Users/anguruso/Desktop/node-symphony/certificates/",
+    "botCertPath": "./certificates/",
     "botCertName": "bot.user81-combined.pem",
     "botCertPassword": "changeit",
     "botEmailAddress": "commandercheng@gmail.com",

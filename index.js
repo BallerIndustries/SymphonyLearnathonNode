@@ -1,36 +1,18 @@
-const Symphony = require('symphony-api-client-node');
+const { findUser, authenticate } = require('./transport/SymphonyTransport');
 const express = require('express');
-const request = require('request');
 const app = express();
 
-Symphony.initBot(__dirname + '/config.json').then((symphonyAuth) => {
-    // Find Naeem
-    findUser('naeem.ahmed@gmail.com', symphonyAuth.sessionAuthToken, function(error, users) {
-        const userObject = JSON.parse(users);
-        userObject.users.forEach(user => { console.log(`Found ${user.displayName}`)});
-    });
-}).fail((error) => {
-    console.log(error);
-});
+async function main() {
+    app.listen(3000, () => console.log('Listening on port 3000!'));
 
-function findUser(email, sessionToken, callback) {
-    const url = `https://develop2.symphony.com/pod/v3/users?email=${email}&local=false`;
-    const headers = {
-        sessionToken: sessionToken
-    };
-
-    const options = {
-        url: url,
-        headers: headers,
-    };
-
-    request(options, function(error, response, body) {
-        if (error) {
-            return callback(error)
-        }
-
-        callback(null, body);
-    })
+    try {
+        const response = await authenticate(__dirname + '/config.json');
+        const users = await findUser('commandercheng@gmail.com', response.sessionToken);
+        users.forEach(user => console.log(user.displayName));
+    }
+    catch (error) {
+        console.log(error);
+    }
 }
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'));
+main();
