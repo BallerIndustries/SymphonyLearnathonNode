@@ -27,37 +27,49 @@ module.exports.getSessionInfo = async function getSessionInfo(sessionToken) {
     return JSON.parse(responseJson);
 };
 
-module.exports.createRoom =
-    async function getSessionInfo(sessionToken, name, description, membersCanInvite, discoverable, isPublic, readOnly,
-                                  copyProtected, crossPod, viewHistory) {
-        const url = `https://develop2.symphony.com/pod/v3/room/create`;
-        const headers = {
-            'sessionToken': sessionToken,
-            'Content-Type': 'application/json',
-        };
-
-        const body = {
-            'name': name,
-            'description': description,
-            'membersCanInvite': membersCanInvite,
-            'discoverable': discoverable,
-            'public': isPublic,
-            'readOnly': readOnly,
-            'copyProtected': copyProtected,
-            'crossPod': crossPod,
-            'viewHistory': viewHistory
-        };
-
-        const options = {
-            url: url,
-            headers: headers,
-            method: 'POST',
-            body: JSON.stringify(body)
-        };
-
-        const responseJson = await rp(options);
-        return JSON.parse(responseJson);
+module.exports.createRoom = async function getSessionInfo(sessionToken, name, description, membersCanInvite,
+                                                          discoverable, isPublic, readOnly, copyProtected,
+                                                          crossPod, viewHistory) {
+    const url = `https://develop2.symphony.com/pod/v3/room/create`;
+    const headers = {
+        'sessionToken': sessionToken,
+        'Content-Type': 'application/json',
     };
+
+    const body = {
+        'name': name,
+        'description': description,
+        'membersCanInvite': membersCanInvite,
+        'discoverable': discoverable,
+        'public': isPublic,
+        'readOnly': readOnly,
+        'copyProtected': copyProtected,
+        'crossPod': crossPod,
+        'viewHistory': viewHistory
+    };
+
+    const options = {
+        url: url,
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify(body)
+    };
+
+    const responseJson = await rp(options);
+    return JSON.parse(responseJson);
+};
+
+module.exports.getMessages = async function getMessages(sessionToken, kmToken, since, streamId) {
+    const url = `https://develop2.symphony.com/agent/v4/stream/${normaliseStreamId(streamId)}/message?since=${since}`;
+
+    const headers = {
+        'sessionToken': sessionToken,
+        'keyManagerToken': kmToken,
+    };
+    const options = {url, headers};
+    const responseJson = await rp(options);
+    return JSON.parse(responseJson);
+};
 
 module.exports.addUser = async function addUser(sessionToken, streamId, userId) {
     const url = `https://develop2.symphony.com/pod/v1/room/${streamId}/membership/add`;
