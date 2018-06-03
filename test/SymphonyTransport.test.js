@@ -7,6 +7,13 @@ describe('SymphonyTransport Smoke Tests', async () => {
     let sessionToken = null;
     let kmToken = null;
 
+    it('should be able to send a message to a stream', async function() {
+        await authenticate();
+        const streamId = 'asTVaSUAmG3ASQBLkHAqhn///pw7qflXdA==';
+        const message = '<messageML>Good Afternoon Angus!</messageML>';
+        await SymphonyTransport.sendMessage(sessionToken, kmToken, streamId, message);
+    }).timeout(10000);
+
     it('should be able to find Angus, Eric, and Naeem', async function() {
         await authenticate();
 
@@ -46,15 +53,6 @@ describe('SymphonyTransport Smoke Tests', async () => {
         const response = await SymphonyTransport.authenticate(__dirname + '/../config.json');
         expect(response.sessionToken).to.exist;
         expect(response.kmToken).to.exist;
-    }).timeout(10000);
-
-
-
-    it('should be able to send a message to a stream', async function() {
-        await authenticate();
-        const streamId = 'rbIAUYjNlM/r3ygrT086LX///pw+4ef7dA==';
-        const message = '<messageML>Hello world!</messageML>';
-        await SymphonyTransport.sendMessage(sessionToken, kmToken, streamId, message);
     }).timeout(10000);
 
     it('should be able to get session info', async function() {

@@ -1,3 +1,5 @@
+const {normaliseStreamId} = require("../util/util");
+
 const rp = require('request-promise');
 const fs = require('fs');
 const Q = require('kew');
@@ -93,21 +95,21 @@ async function findUsers(emails, sessionToken) {
 }
 
 async function sendMessage(sessionToken, keyManagerToken, streamId, message) {
-    const url = `https://develop2.symphony.com/agent/v4/stream/${streamId}/message/create`;
+    const url = `https://develop2.symphony.com/agent/v4/stream/${normaliseStreamId(streamId)}/message/create`;
     const headers = {
         sessionToken: sessionToken,
         keyManagerToken: keyManagerToken,
         contentType: 'multipart/form-data'
     };
 
-    const body = {
+    const formData = {
         message: message
     };
 
     const options = {
         url: url,
         headers: headers,
-        body: JSON.stringify(body),
+        formData: formData,
         method: 'POST'
     };
 
